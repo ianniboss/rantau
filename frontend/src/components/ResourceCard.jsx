@@ -37,9 +37,9 @@ export const ResourceCard = ({ resource, onDownload }) => {
           ))}
         </div>
       )}
-      <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
         <VoteButtons collection="resources" item={resource} compact />
-        <div className="flex items-center gap-3 text-xs text-ink-muted">
+        <div className="flex min-w-0 items-center gap-3 text-xs text-ink-muted">
           <span className="inline-flex items-center gap-1" data-testid={`downloads-${resource.id}`}><Download size={12} /> {resource.downloads || 0}</span>
           {href && (
             <a
@@ -48,10 +48,10 @@ export const ResourceCard = ({ resource, onDownload }) => {
               rel="noreferrer"
               onClick={open}
               data-testid={`resource-open-${resource.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-my-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#02008f] active:scale-95 dark:bg-my-yellow dark:text-[#010066]"
+              className="inline-flex max-w-[14rem] items-center gap-1.5 rounded-lg bg-my-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#02008f] active:scale-95 dark:bg-my-yellow dark:text-[#010066]"
             >
-              {resource.fileUrl ? <FileText size={13} /> : <ExternalLink size={13} />}
-              {resource.fileUrl ? `Open ${resource.fileType?.toUpperCase() || 'file'}` : domain}
+              {resource.fileUrl ? <FileText size={13} className="shrink-0" /> : <ExternalLink size={13} className="shrink-0" />}
+              <span className="truncate">{resource.fileUrl ? `Open ${resource.fileType?.toUpperCase() || 'file'}` : domain}</span>
             </a>
           )}
         </div>

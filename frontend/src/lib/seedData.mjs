@@ -82,19 +82,19 @@ export const ADMIN_RESOURCES = [
 export const ACADEMIC_RESOURCES = [
   {
     ...adminResource(
-      'JPA Scholarship Portal',
+      'JPA (Jabatan Perkhidmatan Awam) Scholarship Info',
       'https://www.jpa.gov.my',
-      'Official Malaysian government scholarship info (Jabatan Perkhidmatan Awam).',
+      'Official Malaysian government scholarship info (Jabatan Perkhidmatan Awam) — the most common sponsor of Malaysian students in France.',
       ['jpa', 'scholarship', 'malaysia'],
     ),
     category: 'academic',
   },
   {
     ...adminResource(
-      'Khazanah Scholarship Info',
-      'https://www.yayasankhazanah.com.my', // TODO: verify current URL
-      'Yayasan Khazanah scholarship programmes for Malaysian students studying abroad.',
-      ['khazanah', 'scholarship', 'malaysia'],
+      'MARA Scholarship Info',
+      'https://www.mara.gov.my',
+      'Majlis Amanah Rakyat (MARA) scholarship and education loan info for Malaysian students studying abroad.',
+      ['mara', 'scholarship', 'malaysia'],
     ),
     category: 'academic',
   },

@@ -1,0 +1,33 @@
+{
+  "summary": "End-to-end test of Rantau — Malaysian Student Resource Hub. Backend (5/5 pytest passing): GET /api/ health, POST /api/upload (PNG happy path), GET /api/files/{path} returning image bytes with image/png, upload of text/plain returns 415, download of unknown path returns 404. Frontend flows exercised against production URL (Firebase Auth + Firestore): public browsing, seeded resources (13 total, 9 Administrative, 2 for tag 'caf'), 10 city cards, empty states, protected /events/new redirect to /login, signup+login of a fresh user, profile view and course edit persistence, event create → RSVP toggle Going 0->1->0->1, save event (appears under Profile → Saved events tab), comment post, Google Maps link present, resource submission with external link showing pending-badge to owner and hidden after logout, upvote 0->1, toggle off ->0, downvote ->-1, download counter incremented on resource-open click, community post create+delete, board filter by Housing category + Paris city, city hub Toulouse: suggest a place + add tip both work, dark mode toggle adds/removes html.dark class, mobile 390px hamburger opens nav-mobile-menu.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Home & Resources (390px mobile)", "issues": ["Horizontal overflow detected: documentElement.scrollWidth > clientWidth on /  and /resources at 390px viewport. /events is fine. Likely a wide grid/card/pill not wrapped or a fixed-width image container."]},
+      {"screen": "Signup / initial auth transition", "issues": ["Uncaught pageerror 'Cannot read properties of null (reading split)' fired during the transient state where firebase auth resolves before the Firestore users/{uid} doc is loaded. Root cause likely lib/format.js:initials(name) called with null user.name in navbar avatar. Add null-guard: name?.split(' ') or default to '' before split."]},
+      {"screen": "Signup form", "issues": ["Console warning: '<span> cannot be a child of <option>' — hydration warning from Signup year select markup (Year N label rendered with a span inside <option>)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_rantau_backend.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Add null-guard in lib/format.js initials() (or wherever navbar reads user name) to avoid the transient 'Cannot read properties of null (reading split)' during signup.",
+    "Fix Signup year <option> markup to not wrap label text in a <span> to remove hydration warning.",
+    "Investigate and fix horizontal overflow at 390px on / and /resources pages (likely a card row not min-w-0 or an SVG/img without max-w-full)."
+  ],
+  "critical_code_review_comments": [
+    "server.py upload endpoint has TODO to verify Firebase ID token — currently anyone can upload as anyone (uid is a plain form field). Recommend integrating firebase-admin verify_id_token before accepting uploads.",
+    "Firestore is deliberately in open test-mode — must be tightened before production (called out by main agent but re-flag).",
+    "Mongo 'files' collection stores upload metadata but MongoDB _id is safely excluded from responses; good.",
+    "Frontend directly uses Firebase SDK — good, but ensure Firestore security rules enforce owner-only writes on votes/comments/posts before shipping."
+  ],
+  "updated_files": ["/app/backend/tests/test_rantau_backend.py", "/app/test_reports/iteration_1.json"],
+  "success_rate": {"backend": "100% (5/5)", "frontend": "100% of tested user-visible flows (minor design/console issues only)"},
+  "test_credentials": "Newly created via signup: qa+1790066392@rantau.test / Rantau123! (Firebase Auth). Password valid. May be re-used or a fresh qa+<timestamp>@rantau.test can be generated per run.",
+  "seed_data_creation": "Created via UI on live Firestore (project rantau-d7242): 1 event (Toulouse, id jVVNujRHMAeLcbKAXPnB) with 1 RSVP + 1 comment + saved by owner; 1 pending resource (external link https://example.com); 1 community post (created + deleted); 1 place (QA Nasi Lemak, Halal restaurant, Toulouse); 1 tip in Toulouse. Data left behind: event, resource, place, tip (post deleted). Main agent should clean up or leave as demo data.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests live at /app/backend/tests/test_rantau_backend.py; run with `pytest /app/backend/tests/ -v --junitxml=/app/test_reports/pytest/pytest_results.xml`. Frontend flows all passed on live app. Selects use option values with proper case: cities use display names ('Toulouse','Paris' etc.), year uses '1'..'6', event category is lowercase ('cultural','academic','social','sports'), resource category lowercase ('administrative','academic','living','community'), post category lowercase ('housing','marketplace','study_group','general','jobs'). Firestore long-poll makes wait_until='networkidle' hang — always use wait_until='load' plus explicit wait_for_timeout.",
+  "rca of the issue": "Not applicable — no blocking bugs. Only minor design/console issues documented above with root causes and suggested fixes."
+}

@@ -35,7 +35,7 @@ const EditForm = ({ profile, onDone }) => {
       <div><label className={labelCls}>Name</label><input data-testid="profile-name-input" className={inputCls} {...register('name', { required: true })} /></div>
       <div><label className={labelCls}>University</label><input data-testid="profile-university-input" className={inputCls} {...register('university', { required: true })} /></div>
       <div><label className={labelCls}>City</label><select data-testid="profile-city-input" className={inputCls} {...register('city')}>{CITY_NAMES.map((c) => <option key={c}>{c}</option>)}</select></div>
-      <div><label className={labelCls}>Year of study</label><select data-testid="profile-year-input" className={inputCls} {...register('yearOfStudy')}>{YEARS.map((y) => <option key={y} value={y}>Year {y}</option>)}</select></div>
+      <div><label className={labelCls}>Year of study</label><select data-testid="profile-year-input" className={inputCls} {...register('yearOfStudy')}>{YEARS.map((y) => <option key={y} value={y}>{`Year ${y}`}</option>)}</select></div>
       <div className="sm:col-span-2"><label className={labelCls}>Course</label><input data-testid="profile-course-input" className={inputCls} {...register('course', { required: true })} /></div>
       <div><label className={labelCls}>Instagram</label><input data-testid="profile-instagram-input" className={inputCls} placeholder="@handle" {...register('instagram')} /></div>
       <div><label className={labelCls}>LinkedIn</label><input data-testid="profile-linkedin-input" className={inputCls} placeholder="https://linkedin.com/in/…" {...register('linkedin')} /></div>

@@ -17,8 +17,8 @@ export const isPastDate = (v) => {
   return d ? isPast(d) : false;
 };
 
-export const initials = (name = '') =>
-  name.split(' ').filter(Boolean).slice(0, 2).map((s) => s[0].toUpperCase()).join('') || '?';
+export const initials = (name) =>
+  (name || '').split(' ').filter(Boolean).slice(0, 2).map((s) => s[0].toUpperCase()).join('') || '?';
 
 const FIREBASE_ERRORS = {
   'auth/email-already-in-use': 'An account with this email already exists.',

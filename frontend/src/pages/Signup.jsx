@@ -52,7 +52,7 @@ export default function Signup() {
           </div>
           <div>
             <label className={labelCls}>Year of study</label>
-            <select data-testid="signup-year-input" className={inputCls} {...register('yearOfStudy')}>{YEARS.map((y) => <option key={y} value={y}>Year {y}</option>)}</select>
+            <select data-testid="signup-year-input" className={inputCls} {...register('yearOfStudy')}>{YEARS.map((y) => <option key={y} value={y}>{`Year ${y}`}</option>)}</select>
           </div>
         </div>
         <div>
