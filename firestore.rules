@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // users/{uid}: readable by anyone authenticated; writable only by the owning uid
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    // events: readable by all; create/update requires auth; delete only by organizer or admin
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.organizer.uid == request.auth.uid;
+      allow update: if signedIn();
+      allow delete: if signedIn() && (resource.data.organizer.uid == request.auth.uid || isAdmin());
+    }
+
+    // resources: approved readable by all; pending visible only to uploader and admins; create requires auth
+    match /resources/{resourceId} {
+      allow read: if resource.data.status == 'approved'
+                  || (signedIn() && resource.data.uploadedBy.uid == request.auth.uid)
+                  || isAdmin();
+      allow create: if signedIn()
+                    && request.resource.data.uploadedBy.uid == request.auth.uid
+                    && (request.resource.data.status == 'pending_approval' || isAdmin());
+      // votes & download counter from any signed-in user; full edits by uploader/admin
+      allow update: if signedIn();
+      allow delete: if signedIn() && (resource.data.uploadedBy.uid == request.auth.uid || isAdmin());
+    }
+
+    // posts & comments: readable by all; create requires auth; delete only by author or admin
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.author.uid == request.auth.uid;
+      allow update: if signedIn();
+      allow delete: if signedIn() && (resource.data.author.uid == request.auth.uid || isAdmin());
+    }
+
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.author.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if signedIn() && (resource.data.author.uid == request.auth.uid || isAdmin());
+    }
+
+    // cities: readable by all; places/tips appendable (exactly one element added) by authenticated users, never overwritten
+    match /cities/{cityId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if signedIn()
+        && request.resource.data.name == resource.data.name
+        && request.resource.data.studentCount == resource.data.studentCount
+        && (
+          (request.resource.data.places.size() == resource.data.places.size() + 1
+             && request.resource.data.tips == resource.data.tips
+             && request.resource.data.places.hasAll(resource.data.places))
+          ||
+          (request.resource.data.tips.size() == resource.data.tips.size() + 1
+             && request.resource.data.places == resource.data.places
+             && request.resource.data.tips.hasAll(resource.data.tips))
+          || isAdmin()
+        );
+      allow delete: if false;
+    }
+  }
+}

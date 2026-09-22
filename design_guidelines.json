@@ -1,0 +1,113 @@
+{
+  "project_name": "Rantau — Malaysian Student Resource Hub (France)",
+  "designer": "E1 - Creative Director",
+  "creator_info": "Ian Hafiz, BUT Informatique student in Toulouse",
+  "app_type": "Hybrid Fullstack Community Platform & Information Utility",
+  "design_archetype": "Swiss & Modern Utility (Clean, Structured, Warm High-Contrast)",
+  "theme_strategy": {
+    "default_mode": "light",
+    "dark_mode_support": true,
+    "philosophy": "Information-first utility platform prioritizing legibility, intuitive discovery, and emotional warmth for Malaysian students navigating French student life."
+  },
+  "color_palette": {
+    "css_variables": {
+      "--primary-red": "#CC0001",
+      "--primary-blue": "#010066",
+      "--primary-yellow": "#FFD100",
+      "--accent": "#FF6B35",
+      "--success": "#2ECC71",
+      "--warning": "#F39C12",
+      "--bg-main": "#F8F9FA",
+      "--bg-card": "#FFFFFF",
+      "--text-primary": "#2C3E50",
+      "--text-secondary": "#7F8C8D",
+      "--border": "#E0E0E0"
+    },
+    "tailwind_mappings": {
+      "primary_blue": "bg-[#010066] text-white",
+      "primary_red": "bg-[#CC0001] text-white",
+      "primary_yellow": "bg-[#FFD100] text-[#2C3E50]",
+      "accent_orange": "bg-[#FF6B35] text-white",
+      "main_bg": "bg-[#F8F9FA]",
+      "card_bg": "bg-white",
+      "text_main": "text-[#2C3E50]",
+      "text_muted": "text-[#7F8C8D]",
+      "border_subtle": "border-[#E0E0E0]"
+    },
+    "usage_rules": "Malaysian flag colors (Red #CC0001, Blue #010066, Yellow #FFD100) are reserved for key CTAs, active indicators, badges, and the subtle hero animated background shift. Never overpower main content areas with harsh red or yellow blocks."
+  },
+  "typography": {
+    "heading_font": "Plus Jakarta Sans, sans-serif",
+    "body_font": "Inter, sans-serif",
+    "font_imports": "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');",
+    "hierarchy": {
+      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2C3E50]",
+      "h3_card_title": "text-lg sm:text-xl font-semibold text-[#2C3E50]",
+      "subtitle": "text-base sm:text-lg text-[#7F8C8D] font-normal leading-relaxed",
+      "body": "text-sm sm:text-base text-[#2C3E50] leading-normal",
+      "badge_label": "text-xs font-semibold tracking-wide uppercase"
+    }
+  },
+  "layout_and_spacing": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "spacing_scale": "p-4, p-6, p-8, p-12, p-16, p-20",
+    "grid_modes": {
+      "hero_bento": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "cards_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+      "dense_resources": "grid grid-cols-1 lg:grid-cols-4 gap-6"
+    },
+    "card_style": "bg-white rounded-xl border border-[#E0E0E0] shadow-sm hover:shadow-md transition-all duration-200 p-6"
+  },
+  "motion_and_animations": {
+    "library": "framer-motion",
+    "rules": {
+      "page_transition": "Initial { opacity: 0, y: 12 }, animate { opacity: 1, y: 0 }, duration 0.2s easeOut",
+      "stagger_list": "Stagger children by 0.04s for list entrance",
+      "card_hover": "whileHover { y: -4, transition: { duration: 0.15 } }",
+      "button_press": "whileTap { scale: 0.96 }",
+      "vote_pulse": "Animate scale [1, 1.2, 1] on vote click",
+      "rsvp_morph": "Smooth icon transform from Plus to Checkmark green badge",
+      "hero_gradient_bg": "CSS keyframe background-position shift animation (15s infinite ease-in-out) blending subtle tint of primary blue and accent red/yellow ambient glows"
+    }
+  },
+  "visual_enhancers": {
+    "sticky_header": "sticky top-0 z-50 backdrop-blur-md bg-white/85 dark:bg-[#0A0A0C]/85 border-b border-[#E0E0E0] shadow-xs",
+    "sliding_nav_indicator": "framer-motion layoutId='activeNav' pill background behind active menu item",
+    "empty_states": "Minimal SVG icon illustration + friendly empathetic microcopy with clear action button",
+    "skeleton_loaders": "Shimmer keyframe loading blocks matching exact card geometries",
+    "toasts": "Sonner top-right toast notifications for RSVP, upvote, post creation, and bookmarking"
+  },
+  "image_urls": {
+    "cities": {
+      "paris": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "toulouse": "https://images.pexels.com/photos/30753236/pexels-photo-30753236.jpeg?auto=compress&cs=tinysrgb&q=85",
+      "lyon": "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "marseille": "https://images.unsplash.com/photo-1549144511-f099e773c147?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    "lifestyle_and_community": {
+      "student_study": "https://images.unsplash.com/photo-1784359065403-93da31c36115?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "library_discussion": "https://images.unsplash.com/photo-1731200302370-539d4b459fe4?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "modern_campus": "https://images.unsplash.com/photo-1764213077313-41b4dc822d8c?crop=entropy&cs=srgb&fm=jpg&q=85"
+    }
+  },
+  "component_guidelines": {
+    "header": "Sticky nav with Rantau logo + flag badge, links to Events, Resources, Community, Cities, and Profile/Login buttons, with sliding indicator.",
+    "homepage": "Hero banner with animated gradient and search bar, upcoming events widget, popular administrative guides (CAF, Ameli, Visa renewal), community discussion feed, city selector pills.",
+    "events": "Search/Filter bar, category tags (Cultural, Academic, Social, Sports), Event Card with date badge, location, attendee avatars, RSVP toggle button, Event Detail page with interactive comments & RSVP state.",
+    "resources": "Tabbed categories (Administrative, Academic, Living, Community), search with upvote/downvote counters, file download counter, direct link to official portals (CAF, Ameli, Campus France).",
+    "community": "Post creation modal/drawer, category/city tags, upvote mechanism, threaded comments, filter by city (Paris, Toulouse, Lyon, All).",
+    "cities": "Grid of French student cities with local student counts, weather/tips preview, dedicated City Hub page featuring local events, recommended student spots, and housing tips.",
+    "profile": "User information, bookmarked resources, created posts, RSVP'd events list, badge status."
+  },
+  "testing_requirements": {
+    "data_testid_convention": "All interactive buttons, inputs, links, tabs, vote buttons, and key cards MUST include kebab-case data-testid attributes (e.g. data-testid='rsvp-button', data-testid='resource-search-input', data-testid='nav-link-events')."
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never use generic centered layouts or unstyled default components.",
+    "Always set explicit hover and focus contrast states on buttons and inputs.",
+    "Include data-testid on all key interactive elements.",
+    "Avoid 3D models or particle canvas in this utility app context.",
+    "Follow mobile-first responsive breakpoints rigorously."
+  ]
+}
