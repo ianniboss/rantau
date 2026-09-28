@@ -45,6 +45,19 @@ export const PLACE_CATEGORIES = [
 
 export const YEARS = [1, 2, 3, 4, 5, 6];
 
+export const CITY_CENTERS = {
+  paris: { lat: 48.8566, lng: 2.3522 },
+  toulouse: { lat: 43.6045, lng: 1.4442 },
+  lyon: { lat: 45.764, lng: 4.8357 },
+  bordeaux: { lat: 44.8378, lng: -0.5792 },
+  lille: { lat: 50.6292, lng: 3.0573 },
+  marseille: { lat: 43.2965, lng: 5.3698 },
+  montpellier: { lat: 43.6108, lng: 3.8767 },
+  nantes: { lat: 47.2184, lng: -1.5536 },
+  strasbourg: { lat: 48.5734, lng: 7.7521 },
+  nice: { lat: 43.7102, lng: 7.262 },
+};
+
 export const ROLE_LABELS = { user: 'Student', contributor: 'Contributor', organizer: 'Organizer', admin: 'Admin' };
 
 export const labelFor = (list, value) => list.find((c) => c.value === value)?.label || value;

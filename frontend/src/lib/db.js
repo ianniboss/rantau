@@ -34,11 +34,19 @@ export async function setRsvp(eventId, uid, status) {
   });
 }
 
-// ---- Resources
+// ---- Resources (queries shaped to satisfy firestore.rules for list reads)
+const byNewest = (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
 export const fetchResources = async () =>
-  snapToList(await getDocs(query(collection(db, 'resources'), orderBy('createdAt', 'desc'))));
-export const fetchResourcesBy = async (uid) =>
-  snapToList(await getDocs(query(collection(db, 'resources'), where('uploadedBy.uid', '==', uid))));
+  snapToList(await getDocs(query(collection(db, 'resources'), where('status', '==', 'approved')))).sort(byNewest);
+export const fetchPendingResources = async () =>
+  snapToList(await getDocs(query(collection(db, 'resources'), where('status', '==', 'pending_approval')))).sort(byNewest);
+export const fetchResourcesBy = async (uid, approvedOnly = false) => {
+  const clauses = [where('uploadedBy.uid', '==', uid)];
+  if (approvedOnly) clauses.push(where('status', '==', 'approved'));
+  return snapToList(await getDocs(query(collection(db, 'resources'), ...clauses))).sort(byNewest);
+};
+export const approveResource = (id) => updateDoc(doc(db, 'resources', id), { status: 'approved' });
+export const deleteResource = (id) => deleteDoc(doc(db, 'resources', id));
 export const createResource = (data, isAdmin) =>
   addDoc(collection(db, 'resources'), {
     ...data, upvotes: 0, downvotes: 0, votedBy: {}, downloads: 0,

@@ -10,6 +10,7 @@ import { PostCard } from '@/components/PostCard';
 import { ListSkeleton } from '@/components/Skeletons';
 import { EmptyState } from '@/components/EmptyState';
 import { StaggerGrid, StaggerItem } from '@/components/Stagger';
+import { WeeklyDigest } from '@/components/WeeklyDigest';
 import { CITIES } from '@/lib/constants';
 import { fetchEvents, fetchPosts, fetchResources } from '@/lib/db';
 import { isPastDate } from '@/lib/format';
@@ -54,7 +55,7 @@ export default function Home() {
   const posts = useQuery({ queryKey: ['posts'], queryFn: fetchPosts });
 
   const upcoming = (events.data || []).filter((e) => !isPastDate(e.date) && e.status !== 'cancelled').slice(0, 3);
-  const popular = (resources.data || []).filter((r) => r.status === 'approved').sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes) || (b.downloads || 0) - (a.downloads || 0)).slice(0, 3);
+  const popular = (resources.data || []).sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes) || (b.downloads || 0) - (a.downloads || 0)).slice(0, 3);
   const recent = (posts.data || []).slice(0, 3);
 
   return (
@@ -108,6 +109,8 @@ export default function Home() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+
+        <WeeklyDigest events={events.data || []} loading={events.isLoading} />
 
         <Section title="Upcoming events" subtitle="Makan, study sessions, futsal — see what's happening near you." to="/events" testId="home-events">
           {events.isLoading ? <ListSkeleton count={3} /> : upcoming.length === 0 ? (

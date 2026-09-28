@@ -1,34 +1,78 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { FileText, Plus, Search } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { FileText, Plus, Search, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { Page, PageHeader } from '@/components/Page';
 import { ResourceCard } from '@/components/ResourceCard';
 import { ListSkeleton } from '@/components/Skeletons';
 import { EmptyState, ErrorState } from '@/components/EmptyState';
 import { StaggerGrid, StaggerItem } from '@/components/Stagger';
 import { RESOURCE_CATEGORIES } from '@/lib/constants';
-import { fetchResources } from '@/lib/db';
+import { approveResource, deleteResource, fetchPendingResources, fetchResources, fetchResourcesBy } from '@/lib/db';
 import { friendlyError } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
 import { btnPrimary, inputCls, pillCls } from '@/lib/ui';
 
 export default function Resources() {
-  const { user, isAdmin } = useAuth();
-  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['resources'], queryFn: fetchResources });
+  const { user, isAdmin, loading: authLoading } = useAuth();
+  const qc = useQueryClient();
+  const approved = useQuery({ queryKey: ['resources'], queryFn: fetchResources });
+  const mine = useQuery({ queryKey: ['userResources', user?.uid], queryFn: () => fetchResourcesBy(user.uid), enabled: !!user });
+  const pending = useQuery({ queryKey: ['pendingResources'], queryFn: fetchPendingResources, enabled: isAdmin });
   const [tab, setTab] = useState('');
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('popular');
   const [localDownloads, setLocalDownloads] = useState({});
 
+  const all = useMemo(() => {
+    const map = new Map();
+    [...(approved.data || []), ...(mine.data || []), ...(pending.data || [])].forEach((r) => map.set(r.id, r));
+    return [...map.values()];
+  }, [approved.data, mine.data, pending.data]);
+
+  const pendingCount = (pending.data || []).length;
+
   const list = useMemo(() => {
     const s = q.toLowerCase().trim();
-    const visible = (data || []).filter((r) => r.status === 'approved' || isAdmin || (user && r.uploadedBy?.uid === user.uid));
-    const filtered = visible.filter((r) => (!tab || r.category === tab) && (!s || r.title.toLowerCase().includes(s) || r.tags?.some((t) => t.toLowerCase().includes(s))));
+    const filtered = all.filter((r) => {
+      if (tab === 'pending') return r.status === 'pending_approval';
+      if (tab && r.category !== tab) return false;
+      return !s || r.title.toLowerCase().includes(s) || r.tags?.some((t) => t.toLowerCase().includes(s));
+    });
     return filtered.sort((a, b) => sort === 'popular'
       ? (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes) || (b.downloads || 0) - (a.downloads || 0)
       : (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-  }, [data, tab, q, sort, user, isAdmin]);
+  }, [all, tab, q, sort]);
+
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ['resources'] });
+    qc.invalidateQueries({ queryKey: ['pendingResources'] });
+    qc.invalidateQueries({ queryKey: ['userResources'] });
+  };
+
+  const approve = async (r) => {
+    try {
+      await approveResource(r.id);
+      refresh();
+      toast.success(`"${r.title}" approved`);
+    } catch (e) {
+      toast.error(friendlyError(e));
+    }
+  };
+
+  const reject = async (r) => {
+    if (!window.confirm(`Reject and delete "${r.title}"?`)) return;
+    try {
+      await deleteResource(r.id);
+      refresh();
+      toast.success('Submission rejected');
+    } catch (e) {
+      toast.error(friendlyError(e));
+    }
+  };
+
+  const isLoading = approved.isLoading || authLoading;
 
   return (
     <Page testId="resources-page">
@@ -45,6 +89,12 @@ export default function Resources() {
           {RESOURCE_CATEGORIES.map((c) => (
             <button key={c.value} data-testid={`resource-tab-${c.value}`} onClick={() => setTab(c.value)} className={pillCls(tab === c.value)}>{c.label}</button>
           ))}
+          {isAdmin && (
+            <button data-testid="resource-tab-pending" onClick={() => setTab('pending')} className={`${pillCls(tab === 'pending')} inline-flex items-center gap-1.5`}>
+              <ShieldCheck size={14} /> Pending
+              {pendingCount > 0 && <span data-testid="pending-count" className="rounded-full bg-my-red px-1.5 text-[10px] font-bold text-white">{pendingCount}</span>}
+            </button>
+          )}
         </div>
         <div className="flex flex-1 gap-2 md:justify-end">
           <label className="relative flex-1 md:max-w-xs">
@@ -58,13 +108,20 @@ export default function Resources() {
         </div>
       </div>
 
-      {error ? <ErrorState message={friendlyError(error)} onRetry={refetch} /> : isLoading ? <ListSkeleton image={false} /> : list.length === 0 ? (
-        <EmptyState icon={FileText} title="Nothing here yet" message={q ? 'No resource matches that search. Try a different keyword or tag.' : 'This category is waiting for its first contribution.'} actionLabel="Share a resource" actionTo="/resources/new" testId="resources-empty" />
+      {approved.error ? <ErrorState message={friendlyError(approved.error)} onRetry={approved.refetch} /> : isLoading ? <ListSkeleton image={false} /> : list.length === 0 ? (
+        tab === 'pending'
+          ? <EmptyState icon={ShieldCheck} title="Queue is clear" message="No submissions waiting for review." testId="pending-empty" />
+          : <EmptyState icon={FileText} title="Nothing here yet" message={q ? 'No resource matches that search. Try a different keyword or tag.' : 'This category is waiting for its first contribution.'} actionLabel="Share a resource" actionTo="/resources/new" testId="resources-empty" />
       ) : (
         <StaggerGrid testId="resources-grid">
           {list.map((r) => (
             <StaggerItem key={r.id}>
-              <ResourceCard resource={{ ...r, downloads: (r.downloads || 0) + (localDownloads[r.id] || 0) }} onDownload={(id) => setLocalDownloads((d) => ({ ...d, [id]: (d[id] || 0) + 1 }))} />
+              <ResourceCard
+                resource={{ ...r, downloads: (r.downloads || 0) + (localDownloads[r.id] || 0) }}
+                onDownload={(id) => setLocalDownloads((d) => ({ ...d, [id]: (d[id] || 0) + 1 }))}
+                onApprove={isAdmin ? approve : undefined}
+                onReject={isAdmin ? reject : undefined}
+              />
             </StaggerItem>
           ))}
         </StaggerGrid>

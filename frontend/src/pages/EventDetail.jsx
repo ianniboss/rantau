@@ -9,6 +9,7 @@ import { DetailSkeleton } from '@/components/Skeletons';
 import { EmptyState } from '@/components/EmptyState';
 import { Comments } from '@/components/Comments';
 import { CategoryBadge } from '@/components/CategoryBadge';
+import { MapView, hasMaps } from '@/components/MapView';
 import { EVENT_CATEGORIES, cityIdFromName } from '@/lib/constants';
 import { deleteEvent, fetchEvent, setRsvp, setSavedEvents } from '@/lib/db';
 import { formatDate, friendlyError, googleMapsLink, isPastDate } from '@/lib/format';
@@ -117,7 +118,9 @@ export default function EventDetail() {
                 <p className="flex items-start gap-2.5 text-sm text-ink"><MapPin size={18} className="mt-0.5 shrink-0 text-my-red" /> <span>{event.location?.address}<br /><Link to={`/cities/${cityIdFromName(event.location?.city)}`} className="text-ink-muted hover:underline">{event.location?.city}</Link></span></p>
               </div>
               <div className="prose-basic mt-6 whitespace-pre-wrap text-sm leading-relaxed text-ink sm:text-base" data-testid="event-description">{event.description}</div>
-              {/* TODO: Google Maps embed via @react-google-maps/api once REACT_APP_GOOGLE_MAPS_API_KEY is set */}
+              {hasMaps && event.location?.lat && event.location?.lng && (
+                <div className="mt-6"><MapView center={{ lat: event.location.lat, lng: event.location.lng }} markers={[{ lat: event.location.lat, lng: event.location.lng, title: event.title }]} zoom={15} testId="event-map" /></div>
+              )}
               <a href={googleMapsLink(event.location?.address, event.location?.city)} target="_blank" rel="noreferrer" data-testid="event-maps-link" className={`${btnSecondary} mt-6`}>
                 <ExternalLink size={16} /> Open in Google Maps
               </a>

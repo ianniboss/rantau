@@ -9,6 +9,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { CITY_NAMES, EVENT_CATEGORIES } from '@/lib/constants';
 import { createEvent } from '@/lib/db';
 import { uploadFile } from '@/lib/api';
+import { geocode } from '@/components/MapView';
 import { friendlyError } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
 import { btnPrimary, errorCls, inputCls, labelCls } from '@/lib/ui';
@@ -24,11 +25,12 @@ export default function EventNew() {
     try {
       let imageUrl = '';
       if (image) imageUrl = (await uploadFile(image, user.uid)).url;
+      const geo = await geocode(`${v.address.trim()}, ${v.city}, France`);
       const ref = await createEvent({
         title: v.title.trim(),
         description: v.description.trim(),
         date: Timestamp.fromDate(new Date(v.date)),
-        location: { city: v.city, address: v.address.trim(), lat: null, lng: null }, // TODO: geocode when Maps API key is configured
+        location: { city: v.city, address: v.address.trim(), lat: geo?.lat ?? null, lng: geo?.lng ?? null },
         category: v.category,
         organizer: { ...authorInfo, contact: v.contact?.trim() || user.email },
         imageUrl,

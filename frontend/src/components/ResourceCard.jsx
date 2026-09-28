@@ -1,11 +1,11 @@
-import { ExternalLink, FileText, Download, Clock, Tag } from 'lucide-react';
+import { ExternalLink, FileText, Download, Clock, Tag, Check, X } from 'lucide-react';
 import { RESOURCE_CATEGORIES } from '@/lib/constants';
 import { incrementDownloads } from '@/lib/db';
 import { timeAgo } from '@/lib/format';
 import { CategoryBadge } from './CategoryBadge';
 import { VoteButtons } from './VoteButtons';
 
-export const ResourceCard = ({ resource, onDownload }) => {
+export const ResourceCard = ({ resource, onDownload, onApprove, onReject }) => {
   const href = resource.fileUrl || resource.externalLink;
   const open = async () => {
     incrementDownloads(resource.id).catch(() => {});
@@ -57,6 +57,16 @@ export const ResourceCard = ({ resource, onDownload }) => {
         </div>
       </div>
       <p className="mt-3 text-[11px] text-ink-muted">Shared by {resource.uploadedBy?.name} · {timeAgo(resource.createdAt)}</p>
+      {resource.status === 'pending_approval' && onApprove && (
+        <div className="mt-4 flex gap-2 border-t border-line pt-4" data-testid={`moderation-${resource.id}`}>
+          <button type="button" data-testid={`approve-resource-${resource.id}`} onClick={() => onApprove(resource)} className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-success px-3 py-2 text-xs font-semibold text-white transition-[background-color,transform] hover:bg-emerald-600 active:scale-95">
+            <Check size={14} /> Approve
+          </button>
+          <button type="button" data-testid={`reject-resource-${resource.id}`} onClick={() => onReject(resource)} className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-my-red/40 px-3 py-2 text-xs font-semibold text-my-red transition-[background-color,transform] hover:bg-my-red/10 active:scale-95">
+            <X size={14} /> Reject
+          </button>
+        </div>
+      )}
     </article>
   );
 };

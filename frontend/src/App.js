@@ -2,6 +2,7 @@ import '@/App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/useTheme';
+import { MapsProvider } from '@/components/MapView';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import Home from '@/pages/Home';
@@ -26,6 +27,7 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+        <MapsProvider>
         <BrowserRouter>
           <Routes>
             <Route element={<Layout />}>
@@ -48,6 +50,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
+        </MapsProvider>
       </AuthProvider>
     </ThemeProvider>
   );

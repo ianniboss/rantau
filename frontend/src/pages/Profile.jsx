@@ -65,18 +65,19 @@ export default function Profile() {
   const [tab, setTab] = useState(isOwn ? 'saved' : 'events');
   const [editing, setEditing] = useState(false);
 
-  const { data: fetched, isLoading } = useQuery({ queryKey: ['user', uid], queryFn: () => fetchUser(uid), enabled: !!uid && !isOwn });
+  const { data: fetched, isLoading, error: userError } = useQuery({ queryKey: ['user', uid], queryFn: () => fetchUser(uid), enabled: !!uid && !isOwn, retry: false });
   const profile = isOwn ? ownProfile : fetched;
 
   const saved = useQuery({ queryKey: ['savedEvents', uid, ownProfile?.savedEvents], queryFn: () => fetchEventsByIds(ownProfile?.savedEvents || []), enabled: isOwn && tab === 'saved' });
   const events = useQuery({ queryKey: ['userEvents', uid], queryFn: () => fetchEventsBy(uid), enabled: !!uid && tab === 'events' });
-  const resources = useQuery({ queryKey: ['userResources', uid], queryFn: () => fetchResourcesBy(uid), enabled: !!uid && tab === 'resources' });
+  const resources = useQuery({ queryKey: ['userResources', uid, isOwn], queryFn: () => fetchResourcesBy(uid, !isOwn), enabled: !!uid && tab === 'resources' });
   const posts = useQuery({ queryKey: ['userPosts', uid], queryFn: () => fetchPostsBy(uid), enabled: !!uid && tab === 'posts' });
 
   if (!isOwn && isLoading) return <Page testId="profile-page"><div className="skeleton h-40 rounded-2xl" /><ListSkeleton count={3} /></Page>;
+  if (!isOwn && !user && (userError || !profile)) return <Page testId="profile-page"><EmptyState title="Log in to view profiles" message="Student profiles are only visible to signed-in members of Rantau." actionLabel="Log in" actionTo="/login" testId="profile-auth-required" /></Page>;
   if (!profile) return <Page testId="profile-page"><EmptyState title={isOwn ? 'Finish setting up your profile' : 'Profile not found'} message={isOwn ? "We couldn't load your profile document. Try logging out and back in." : 'This user may not exist.'} actionLabel="Go home" actionTo="/" /></Page>;
 
-  const visibleResources = (resources.data || []).filter((r) => isOwn || r.status === 'approved');
+  const visibleResources = resources.data || [];
   const content = {
     saved: { q: saved, items: saved.data || [], empty: ['No saved events', 'Tap "Save event" on any event to keep it here.', '/events', 'Browse events'], render: (e) => <EventCard event={e} /> },
     events: { q: events, items: events.data || [], empty: [isOwn ? "You haven't organised anything yet" : 'No events organised', isOwn ? 'Your events will be listed here.' : '', isOwn ? '/events/new' : null, 'Create an event'], render: (e) => <EventCard event={e} /> },

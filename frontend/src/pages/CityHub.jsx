@@ -10,7 +10,8 @@ import { EventCard } from '@/components/EventCard';
 import { ListSkeleton } from '@/components/Skeletons';
 import { EmptyState } from '@/components/EmptyState';
 import { StaggerGrid, StaggerItem } from '@/components/Stagger';
-import { CITIES, PLACE_CATEGORIES, labelFor } from '@/lib/constants';
+import { CITIES, CITY_CENTERS, PLACE_CATEGORIES, labelFor } from '@/lib/constants';
+import { MapView, geocode, hasMaps } from '@/components/MapView';
 import { addPlace, addTip, fetchCity, fetchEvents } from '@/lib/db';
 import { friendlyError, googleMapsLink, isPastDate, timeAgo } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,12 +19,18 @@ import { btnPrimary, btnSecondary, inputCls, labelCls, pillCls } from '@/lib/ui'
 
 const PLACE_ICONS = { restaurant: Utensils, grocery: ShoppingBasket, mosque: Moon, other: Store };
 
-const PlaceForm = ({ cityId, onDone }) => {
+const PlaceForm = ({ cityId, cityName, onDone }) => {
   const { user, authorInfo } = useAuth();
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ defaultValues: { category: 'restaurant' } });
   const submit = async (v) => {
     try {
-      await addPlace(cityId, { name: v.name.trim(), category: v.category, address: v.address.trim(), lat: v.lat ? Number(v.lat) : null, lng: v.lng ? Number(v.lng) : null, addedBy: user.uid, addedByName: authorInfo.name });
+      let lat = v.lat ? Number(v.lat) : null;
+      let lng = v.lng ? Number(v.lng) : null;
+      if (lat === null || lng === null) {
+        const geo = await geocode(`${v.address.trim()}, ${cityName}, France`);
+        if (geo) ({ lat, lng } = geo);
+      }
+      await addPlace(cityId, { name: v.name.trim(), category: v.category, address: v.address.trim(), lat, lng, addedBy: user.uid, addedByName: authorInfo.name });
       reset();
       toast.success('Place suggested — thanks!');
       onDone();
@@ -122,8 +129,12 @@ export default function CityHub() {
               <button data-testid="place-filter-all" onClick={() => setPlaceFilter('')} className={pillCls(!placeFilter)}>All</button>
               {PLACE_CATEGORIES.map((c) => <button key={c.value} data-testid={`place-filter-${c.value}`} onClick={() => setPlaceFilter(c.value)} className={pillCls(placeFilter === c.value)}>{c.label}</button>)}
             </div>
-            {showPlaceForm && user && <PlaceForm cityId={cityId} onDone={() => { setShowPlaceForm(false); qc.invalidateQueries({ queryKey: ['city', cityId] }); }} />}
-            {/* TODO: render Google Map with pins (lat/lng) via @react-google-maps/api when API key is configured */}
+            {showPlaceForm && user && <PlaceForm cityId={cityId} cityName={name} onDone={() => { setShowPlaceForm(false); qc.invalidateQueries({ queryKey: ['city', cityId] }); }} />}
+            {hasMaps && (
+              <div className="mt-4">
+                <MapView center={CITY_CENTERS[cityId]} zoom={13} markers={places.filter((p) => p.lat && p.lng).map((p) => ({ lat: p.lat, lng: p.lng, title: p.name }))} testId="city-map" />
+              </div>
+            )}
             <div className="mt-4 space-y-3">
               {isLoading && [0, 1, 2].map((i) => <div key={i} className="skeleton h-16 rounded-xl" />)}
               {!isLoading && places.length === 0 && <EmptyState icon={Utensils} title="No places listed yet" message="Know a halal spot or an Asian grocery here? Suggest it and help the next arrival." testId="places-empty" />}
