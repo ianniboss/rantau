@@ -29,10 +29,11 @@ Auth w/ profile fields · Events (filters, RSVP, comments, create w/ image) · R
 - Dark mode, route transitions, skeleton shimmer, stagger lists, hover lift, vote pulse, RSVP morph, sticky blur nav w/ sliding indicator, animated hero gradient, toasts.
 - README with Firebase/Vercel setup; `.env.example`; seed script; rules files.
 - Fixes after test: initials null-guard, 390px overflow on resource cards, MARA replaces Khazanah in seed + live Firestore.
+- Iteration 2: admin resource approval (Pending tab, Approve/Reject) on /resources; homepage "This week in {city}" digest (next 3 events + newest 3 tips, city select persisted); resource queries reshaped to be rules-compatible (where status/uid); Google Maps component + geocoding wired behind `REACT_APP_GOOGLE_MAPS_API_KEY` (user skipped key — inactive); `scripts/set-role.mjs` to grant admin. Tested ✅ iteration_2.
 
 ## Backlog
-- P0: Publish final `firestore.rules` in Firebase Console (currently open test-mode). Verify server-side Firebase ID token on `/api/upload` (firebase-admin).
-- P1: Google Maps embed for event detail + city places (needs API key). Admin approval UI for pending resources. Event status auto "completed" after date.
+- P0: Publish final `firestore.rules` in Firebase Console (user skipped — currently open test-mode until 2026-12-31) then regression-test under strict rules. Verify server-side Firebase ID token on `/api/upload` (firebase-admin).
+- P1: Provide Google Maps key to activate event/city maps + geocoding. Event status auto "completed" after date.
 - P2: Notifications, chat, richer profiles (avatar upload), pagination for large lists, composite Firestore indexes if server-side filtering is needed.
 
 ## Known notes

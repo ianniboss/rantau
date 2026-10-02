@@ -1,0 +1,28 @@
+{
+  "summary": "Frontend-only regression + new-feature test of Rantau on live preview URL. Covered: admin resource approval UI (Pending tab + badge, approve, reject-with-confirm), per-user visibility of pending submissions, hiding of pending for logged-out visitors, homepage WeeklyDigest (default Toulouse, Paris switch empty states, localStorage persistence, city-link to /cities/paris, logged-in auto-pick of profile.city=Toulouse), resource library regression (15 approved cards, MARA present, no Khazanah, search 'CAF' = 2, sort recent). Mobile 390px overflow previously reported in iteration_1 is now fixed on / and /resources (scrollWidth == clientWidth = 390). All new flows pass end-to-end.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/events filters", "issues": ["Native browser <input type=\"date\"> date pickers used for 'from/to' filters instead of a shadcn/consistent calendar component."]},
+      {"screen": "All pages (Firebase)", "issues": ["Transient Firestore WebChannel 'unavailable' warnings in console on first navigation; Firebase SDK recovers automatically. Not blocking but noisy."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_rantau_backend.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Resources.jsx: approved + mine + pending are merged into a single `all` list in-memory then filtered by tab, which means a signed-in user whose pending submission is in `mine` will still 'leak' into the 'All' tab for themselves (expected UX per spec), but future admin-only 'approved' sorting could be more defensive. Current behaviour is correct.",
+    "WeeklyDigest.jsx: `useEffect` writes profile city via cityIdFromName but does NOT also persist to localStorage; on next load without profile, previous localStorage value wins. Minor but could surprise users switching accounts. Acceptable.",
+    "db.js approveResource/deleteResource: no role check client-side (relies on Firestore rules). Firestore rules currently open test-mode — must enforce `request.auth.token.role=='admin'` before production.",
+    "Native date inputs on /events — switch to shadcn Calendar for consistent UX."
+  ],
+  "updated_files": ["/app/test_reports/iteration_2.json"],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "100% of specified flows"},
+  "test_credentials": "Admin qa+1790066392@rantau.test / Rantau123! (role=admin). Regular test user created this run: qa+1790961548@rantau.test / Rantau123! (role=member).",
+  "seed_data_creation": "Created via UI (live Firestore): approved resource 'QA Pending 1790961548' (category=living, external link https://example.org) owned by qa+1790961548@rantau.test. Rejected resource 'QA Reject 1790961548' was deleted via admin reject. One pre-existing admin-owned pending resource 'QA Resource 1790066392' remains in the Pending queue (count badge = 1 after cleanup).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Signup form uses data-testid=signup-{name|email|password|university|course|city|year}-input and signup-submit-button. Login uses login-{email|password}-input and login-submit-button. ResourceNew category selector testid is `resource-category-input` (select, not -select). Approve/Reject buttons live on each pending card: approve-resource-{id}, reject-resource-{id}. Reject uses window.confirm — register page.on('dialog', d.accept()). Logout: nav-user-menu then nav-logout (both testids present but a quick page.locator('[data-testid=\"nav-logout\"]') after opening menu is reliable). Firestore long-poll makes wait_until='networkidle' hang — always use 'load' + explicit waits.",
+  "rca of the issue": "None — all tested behaviours pass. The horizontal overflow at 390px reported in iteration_1 is now resolved (verified: documentElement.scrollWidth == clientWidth == 390 on both / and /resources)."
+}
