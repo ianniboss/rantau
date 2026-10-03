@@ -1,14 +1,14 @@
 export const CITIES = [
-  { id: 'paris', name: 'Paris', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?crop=entropy&cs=srgb&fm=jpg&q=80&w=900' },
-  { id: 'toulouse', name: 'Toulouse', image: 'https://images.pexels.com/photos/30753236/pexels-photo-30753236.jpeg?auto=compress&cs=tinysrgb&q=80&w=900' },
-  { id: 'lyon', name: 'Lyon', image: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?crop=entropy&cs=srgb&fm=jpg&q=80&w=900' },
-  { id: 'bordeaux', name: 'Bordeaux', image: null },
-  { id: 'lille', name: 'Lille', image: null },
-  { id: 'marseille', name: 'Marseille', image: 'https://images.unsplash.com/photo-1549144511-f099e773c147?crop=entropy&cs=srgb&fm=jpg&q=80&w=900' },
-  { id: 'montpellier', name: 'Montpellier', image: null },
-  { id: 'nantes', name: 'Nantes', image: null },
-  { id: 'strasbourg', name: 'Strasbourg', image: null },
-  { id: 'nice', name: 'Nice', image: null },
+  { id: 'paris', name: 'Paris', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?crop=entropy&cs=srgb&fm=jpg&q=80&w=1200' },
+  { id: 'toulouse', name: 'Toulouse', image: 'https://images.unsplash.com/photo-1650707199496-b02442055332?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'lyon', name: 'Lyon', image: 'https://images.unsplash.com/photo-1602719092282-f027126b6b74?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'bordeaux', name: 'Bordeaux', image: 'https://images.unsplash.com/photo-1536005566535-fc9a7a68f4c1?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'lille', name: 'Lille', image: 'https://images.pexels.com/photos/32405354/pexels-photo-32405354.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { id: 'marseille', name: 'Marseille', image: 'https://images.unsplash.com/photo-1628025799421-5b0d37fc0624?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'montpellier', name: 'Montpellier', image: 'https://images.unsplash.com/photo-1613283850334-9219c5fb7143?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'nantes', name: 'Nantes', image: 'https://images.unsplash.com/photo-1601827580383-5263a5571cea?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
+  { id: 'strasbourg', name: 'Strasbourg', image: 'https://images.pexels.com/photos/38200805/pexels-photo-38200805.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { id: 'nice', name: 'Nice', image: 'https://images.unsplash.com/photo-1664262322738-1adaaa33cfd0?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200' },
 ];
 
 export const CITY_NAMES = CITIES.map((c) => c.name);
