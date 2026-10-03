@@ -24,6 +24,7 @@ Build a production-ready full-stack platform connecting Malaysian students acros
 ## Core requirements (static)
 Auth w/ profile fields · Events (filters, RSVP, comments, create w/ image) · Resources (tabs, search, votes, downloads, pending approval) · Community (categories, city filter, comments, votes) · City hubs (10 cities, places, tips) · Profiles (own + public) · Motion polish · Responsive 375/768/1280 · Loading/empty/error states.
 
+- Iteration 4: fixed city images — all 10 cities in `CITIES` (`constants.js`) now use real significant-landmark photos (6 were previously `null` → gradient fallback; some were wrong). Applies to `/cities` grid + each City Hub hero. Tested ✅ iteration_4 (10/10 load, correct landmarks).
 - Iteration 3: **Maps migrated from Google Maps to Leaflet + OpenStreetMap** (removed `@react-google-maps/api`; added `leaflet@1.9.4` + `react-leaflet@5.0.0` for React 19). `MapView.jsx` rewritten: OSM tile layer + attribution, `L.Icon.Default` marker-icon bundler fix, `geocode()` via OSM Nominatim, `hasMaps=true`, `MapsProvider` passthrough. Dark-theme tile filter in `index.css`. No API key/billing needed. README + `.env.example` updated (dropped `REACT_APP_GOOGLE_MAPS_API_KEY`). Also: untracked `.emergent/` + `.gitconfig` from git (kept locally, added to `.gitignore`). Tested ✅ iteration_3 (5/5 frontend).
 
 ## Implemented (earlier)
