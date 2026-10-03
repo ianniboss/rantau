@@ -13,14 +13,14 @@ Built by **Ian Hafiz** — BUT Informatique, IUT Paul Sabatier (Toulouse), JPA s
 | Frontend | React 19 + Tailwind CSS, React Router v7, React Hook Form, framer-motion, lucide-react, sonner (toasts), TanStack Query |
 | Auth / DB | **Firebase Authentication** (email/password) + **Cloud Firestore** |
 | File uploads | Small FastAPI service (`/backend`) that stores files in Emergent object storage and serves them back at `/api/files/...` (see *Assumptions*) |
-| Maps | Skipped for MVP — addresses link out to Google Maps. `@react-google-maps/api` hook points are marked with `TODO` comments |
+| Maps | **Leaflet + OpenStreetMap** tiles — no API key or billing required. Embedded maps render on event detail & city hub pages; records without coordinates fall back to a Google Maps address-search link |
 | Deployment | Frontend → Vercel, Firebase (Auth/Firestore/rules), file service → any Python host |
 
 ### Assumptions / deviations (documented on purpose)
 
 1. **Create React App (craco) instead of Vite.** The hosting environment ships a CRA toolchain; the folder layout (`src/components`, `src/pages`, `src/hooks`, `src/lib/firebase.js`) is exactly as specified and would port to Vite by renaming `REACT_APP_*` → `VITE_*` and `process.env` → `import.meta.env`.
 2. **Uploads use Emergent object storage via FastAPI**, not Firebase Storage (chosen by the project owner). `storage.rules` is still provided if you switch to Firebase Storage.
-3. **Google Maps skipped** at the owner's request. `location.lat/lng` and `places[].lat/lng` are stored (nullable) so a map can be dropped in later.
+3. **Maps use Leaflet + OpenStreetMap** (no API key, no billing). `location.lat/lng` and `places[].lat/lng` are stored (nullable, auto-geocoded via OSM Nominatim on create); records without coordinates fall back to a Google Maps address-search link.
 4. Comments use the field `postId` for the parent id (as in the schema) plus `parentType` (`post | event | resource`).
 5. The `users/{uid}` doc has an extra optional `socialLinks` map; resources seeded by the script carry `isSeed: true`.
 6. Roles are set manually in Firestore (`users/{uid}.role = "admin"`). No admin UI (out of scope).
@@ -74,16 +74,17 @@ REACT_APP_FIREBASE_STORAGE_BUCKET=
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID=
 REACT_APP_FIREBASE_APP_ID=
 REACT_APP_FIREBASE_MEASUREMENT_ID=
-REACT_APP_GOOGLE_MAPS_API_KEY=    # not used yet — reserved for the Maps integration
 ```
+
+> Maps are powered by **Leaflet + OpenStreetMap** and need **no API key or billing** — there is nothing extra to configure.
 
 Backend (`backend/.env`): `MONGO_URL`, `DB_NAME`, `CORS_ORIGINS`, `EMERGENT_LLM_KEY` (object storage key).
 
 **Never commit real keys.** `.env` files are git-ignored.
 
-### 3. Google Maps API key (when you add maps)
+### 3. Maps
 
-Google Cloud Console → APIs & Services → Enable **Maps JavaScript API** → Credentials → Create API key → restrict to your domains → put it in `REACT_APP_GOOGLE_MAPS_API_KEY`. Then wire `@react-google-maps/api` in `EventDetail.jsx` and `CityHub.jsx` where the `TODO` comments are.
+Maps use **Leaflet + OpenStreetMap** tiles via `react-leaflet` — **no API key, no Google Cloud billing, nothing to configure**. Embedded maps render in `EventDetail.jsx` and `CityHub.jsx` using the stored `lat/lng`; addresses are auto-geocoded on create through OSM Nominatim, and any record still missing coordinates falls back to a Google Maps address-search link.
 
 ### 4. Seed data
 
@@ -145,4 +146,4 @@ Deploy `backend/` to any Python host (Railway, Render, Fly…) with the env vars
 - Motion: route transitions, shimmer skeletons, staggered lists, hover lift, tactile buttons, vote pulse, RSVP morph, toasts, sticky blur nav with sliding indicator, animated hero gradient, dark mode
 
 ## Out of scope (hooks left as TODOs)
-Admin moderation UI · real-time chat · notifications · payments · native app · Google Maps embed.
+Admin moderation UI · real-time chat · notifications · payments · native app.

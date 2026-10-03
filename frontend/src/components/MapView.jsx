@@ -1,43 +1,54 @@
-import { createContext, useContext } from 'react';
-import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
-const KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-export const hasMaps = !!KEY;
+// Fix Leaflet's default marker icons not loading under webpack/CRA bundling.
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
-const MapsContext = createContext({ isLoaded: false });
+// Maps are powered by Leaflet + OpenStreetMap — no API key or billing required.
+export const hasMaps = true;
 
-const Loader = ({ children }) => {
-  const { isLoaded, loadError } = useJsApiLoader({ id: 'rantau-gmaps', googleMapsApiKey: KEY });
-  return <MapsContext.Provider value={{ isLoaded: isLoaded && !loadError, loadError }}>{children}</MapsContext.Provider>;
-};
+// Pass-through so existing <MapsProvider> usage in App.js keeps working (Leaflet needs no provider).
+export const MapsProvider = ({ children }) => children;
 
-export const MapsProvider = ({ children }) => (hasMaps ? <Loader>{children}</Loader> : children);
+const OSM_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export const useMaps = () => useContext(MapsContext);
-
+// Free geocoding via OpenStreetMap Nominatim (no key). Returns { lat, lng } or null.
 export async function geocode(address) {
-  if (!hasMaps || !window.google?.maps?.Geocoder) return null;
+  if (!address) return null;
   try {
-    const { results } = await new window.google.maps.Geocoder().geocode({ address, region: 'fr' });
-    const loc = results?.[0]?.geometry?.location;
-    return loc ? { lat: loc.lat(), lng: loc.lng() } : null;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=${encodeURIComponent(address)}`;
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const hit = data?.[0];
+    return hit ? { lat: Number(hit.lat), lng: Number(hit.lon) } : null;
   } catch {
     return null;
   }
 }
 
-const OPTIONS = { disableDefaultUI: true, zoomControl: true, clickableIcons: false };
-
 export const MapView = ({ center, markers = [], zoom = 13, className = 'h-64 sm:h-80', testId = 'map-view' }) => {
-  const { isLoaded, loadError } = useMaps();
-  if (!hasMaps) return null;
-  if (loadError) return <p data-testid="map-error" className="text-sm text-ink-muted">Map couldn't load — check the Google Maps API key.</p>;
-  if (!isLoaded) return <div className={`skeleton rounded-xl ${className}`} data-testid="map-loading" />;
+  if (!center || center.lat == null || center.lng == null) return null;
   return (
-    <div data-testid={testId} className={`overflow-hidden rounded-xl ring-1 ring-line ${className}`}>
-      <GoogleMap mapContainerStyle={{ width: '100%', height: '100%' }} center={center} zoom={zoom} options={OPTIONS}>
-        {markers.map((m, i) => <MarkerF key={`${m.lat}-${m.lng}-${i}`} position={{ lat: m.lat, lng: m.lng }} title={m.title} />)}
-      </GoogleMap>
+    <div data-testid={testId} className={`rantau-map overflow-hidden rounded-xl ring-1 ring-line ${className}`}>
+      <MapContainer center={[center.lat, center.lng]} zoom={zoom} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
+        <TileLayer url={OSM_URL} attribution={OSM_ATTRIBUTION} />
+        {markers.map((m, i) => (
+          <Marker key={`${m.lat}-${m.lng}-${i}`} position={[m.lat, m.lng]}>
+            {m.title && <Popup>{m.title}</Popup>}
+          </Marker>
+        ))}
+      </MapContainer>
     </div>
   );
 };
