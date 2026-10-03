@@ -83,6 +83,10 @@ android-sdk/
 
 # overlay black-box crash/user-report dumps — session data, never history
 **/.emergent/recordings/
+
+# AI tooling scaffolding (kept locally, untracked from git)
+.emergent/
+.gitconfig
 frontend/node_modules/.cache/default-development/4.pack
 frontend/node_modules/.cache/default-development/1.pack
 frontend/node_modules/.cache/default-development/2.pack
