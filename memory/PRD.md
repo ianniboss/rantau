@@ -5,7 +5,7 @@ Build a production-ready full-stack platform connecting Malaysian students acros
 
 ## User choices
 - Backend: Firebase (Auth + Firestore) — config for project `rantau-d7242` in `frontend/.env`
-- Maps: skipped (address + "Open in Google Maps" link; TODO hooks for `@react-google-maps/api`)
+- Maps: **Leaflet + OpenStreetMap** (no API key / no billing). Embedded maps on event detail + city hubs; nullable lat/lng auto-geocoded via OSM Nominatim on create; records without coords fall back to a Google Maps address-search link.
 - File uploads: Emergent object storage via FastAPI bridge (`/api/upload`, `/api/files/{path}`)
 - Name: **Rantau**
 - Scholarship references: JPA and MARA (not Khazanah)
@@ -24,7 +24,9 @@ Build a production-ready full-stack platform connecting Malaysian students acros
 ## Core requirements (static)
 Auth w/ profile fields · Events (filters, RSVP, comments, create w/ image) · Resources (tabs, search, votes, downloads, pending approval) · Community (categories, city filter, comments, votes) · City hubs (10 cities, places, tips) · Profiles (own + public) · Motion polish · Responsive 375/768/1280 · Loading/empty/error states.
 
-## Implemented (2026-06)
+- Iteration 3: **Maps migrated from Google Maps to Leaflet + OpenStreetMap** (removed `@react-google-maps/api`; added `leaflet@1.9.4` + `react-leaflet@5.0.0` for React 19). `MapView.jsx` rewritten: OSM tile layer + attribution, `L.Icon.Default` marker-icon bundler fix, `geocode()` via OSM Nominatim, `hasMaps=true`, `MapsProvider` passthrough. Dark-theme tile filter in `index.css`. No API key/billing needed. README + `.env.example` updated (dropped `REACT_APP_GOOGLE_MAPS_API_KEY`). Also: untracked `.emergent/` + `.gitconfig` from git (kept locally, added to `.gitignore`). Tested ✅ iteration_3 (5/5 frontend).
+
+## Implemented (earlier)
 - All 6 feature areas end-to-end; tested by testing agent (backend 5/5, all frontend flows pass).
 - Dark mode, route transitions, skeleton shimmer, stagger lists, hover lift, vote pulse, RSVP morph, sticky blur nav w/ sliding indicator, animated hero gradient, toasts.
 - README with Firebase/Vercel setup; `.env.example`; seed script; rules files.
@@ -33,7 +35,7 @@ Auth w/ profile fields · Events (filters, RSVP, comments, create w/ image) · R
 
 ## Backlog
 - P0: Publish final `firestore.rules` in Firebase Console (user skipped — currently open test-mode until 2026-12-31) then regression-test under strict rules. Verify server-side Firebase ID token on `/api/upload` (firebase-admin).
-- P1: Provide Google Maps key to activate event/city maps + geocoding. Event status auto "completed" after date.
+- P1: Event status auto "completed" after date. (Optional) proxy OSM Nominatim through backend with a descriptive User-Agent if geocoding volume grows.
 - P2: Notifications, chat, richer profiles (avatar upload), pagination for large lists, composite Firestore indexes if server-side filtering is needed.
 
 ## Known notes

@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only verification of Leaflet + OpenStreetMap maps migration (replacing Google Maps). All 5 required scenarios pass on the live preview URL. Paris and Toulouse city hub pages render an embedded Leaflet map (data-testid=city-map) with OSM tiles (6-8 tiles loaded) and 'OpenStreetMap' attribution — no Google Maps billing error overlay. Logged in as admin qa+1790066392@rantau.test and created event 'QA Maps Event 1791041986' at '12 Rue Alsace-Lorraine, Toulouse, France'; OSM Nominatim geocode succeeded and app redirected to /events/<id>. Event detail page shows the embedded Leaflet map (data-testid=event-map) with a visible, non-broken marker (img.leaflet-marker-icon naturalWidth=25, served as a webpack-bundled base64 PNG — the L.Icon.Default.mergeOptions fix works). The 'Open in Google Maps' fallback link (data-testid=event-maps-link) is also present. No Leaflet, marker-icon, or react-leaflet console errors detected. Only noise = pre-existing transient Firestore WebChannel 'unavailable' warnings (same as iteration_2, unrelated).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MapView.jsx correctly deletes L.Icon.Default.prototype._getIconUrl and merges imported marker PNG assets so webpack-hashed URLs are used — marker renders as embedded data: URL (naturalWidth=25). Clean.",
+    "geocode() uses Nominatim with no User-Agent / Referer identification. Nominatim ToS asks for a descriptive User-Agent; fetch() in browser can't override User-Agent but adding an 'Accept-Language' and keeping volume low is recommended. For heavy use, add client-side debounce or move to backend proxy with proper UA.",
+    "EventDetail.jsx:124 renders the Google Maps fallback link always (good), independent of whether coords exist — matches spec."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only)", "frontend": "100% (5/5 scenarios)"},
+  "test_credentials": "Used admin qa+1790066392@rantau.test / Rantau123!",
+  "seed_data_creation": "Created one event via live Firestore: 'QA Maps Event 1791041986' at /events/<id> (Toulouse, 12 Rue Alsace-Lorraine, 2026-06-15 19:00) owned by admin. Has lat/lng from Nominatim.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Maps migration verified working on Paris/Toulouse hubs and on event detail. OSM tiles come from {s}.tile.openstreetmap.org; the marker icon loads as a data: URL embedded by webpack (not a .png file request), so there is no network 404 for marker-icon.png. Allow ~3-4s after locating [data-testid=city-map]/[data-testid=event-map] for tiles to populate before asserting img.leaflet-tile count. Firestore WebChannel 'unavailable' warnings on first navigation are transient and unrelated.",
+  "rca of the issue": "N/A — nothing broken."
+}
