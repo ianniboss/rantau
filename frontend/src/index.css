@@ -62,6 +62,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -105,6 +106,62 @@ h1, h2, h3, h4 {
 }
 
 .prose-basic p { margin-bottom: 0.75rem; }
+
+.navbar-background {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.navbar-solid .navbar-background {
+  opacity: 1;
+}
+
+/* Keep the shared focusRing, with a two-color edge over the hero gradient. */
+.navbar-on-hero :focus-visible {
+  --tw-ring-color: var(--primary-yellow) !important;
+  --tw-ring-offset-color: var(--primary-blue) !important;
+}
+
+.nav-drawer-backdrop[data-state="open"] {
+  animation: nav-backdrop-in 180ms ease-out;
+}
+
+.nav-drawer-backdrop[data-state="closed"] {
+  animation: nav-backdrop-out 180ms ease-in;
+}
+
+.nav-drawer-panel {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-drawer-panel[data-state="open"] {
+  animation: nav-drawer-in 220ms ease-out;
+}
+
+.nav-drawer-panel[data-state="closed"] {
+  animation: nav-drawer-out 180ms ease-in;
+}
+
+@keyframes nav-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nav-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes nav-drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes nav-drawer-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
 
 /* Leaflet map: tint tiles to match the dark theme (attribution/controls stay readable). */
 .rantau-map .leaflet-container { background: hsl(var(--panel, 0 0% 10%)); }
