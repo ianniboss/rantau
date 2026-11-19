@@ -50,9 +50,11 @@ export const FileUpload = ({ accept = 'image/*', multiple = false, onChange, lab
                 type="button"
                 aria-label="Remove file"
                 onClick={() => update(files.filter((_, j) => j !== i))}
-                className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-ink text-white shadow transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow before:absolute before:-inset-2 before:content-['']"
+                className="absolute -right-3.5 -top-3.5 flex h-11 w-11 items-center justify-center transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow rounded-full"
               >
-                <X size={13} />
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-white shadow">
+                  <X size={14} />
+                </span>
               </button>
             </li>
           ))}

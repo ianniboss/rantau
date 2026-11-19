@@ -38,7 +38,7 @@ export const VoteButtons = ({ collection, item, compact = false, onChange }) => 
       data-testid={`${dir}vote-button-${item.id}`}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); vote(dir); }}
       aria-label={dir === 'up' ? 'Upvote' : 'Downvote'}
-      className={`relative grid h-8 w-8 place-items-center rounded-lg transition-[background-color,color] duration-150 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow before:absolute before:-inset-2 before:content-[''] ${
+      className={`relative grid h-8 w-8 place-items-center rounded-lg transition-[background-color,color] duration-150 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow before:absolute before:-inset-1.5 before:content-[''] ${
         active ? (dir === 'up' ? 'bg-success/15 text-emerald-600' : 'bg-my-red/10 text-my-red') : 'text-ink-muted hover:bg-ink/5 hover:text-ink'
       }`}
     >
@@ -47,7 +47,7 @@ export const VoteButtons = ({ collection, item, compact = false, onChange }) => 
   );
 
   return (
-    <div className={`flex items-center rounded-lg border border-line bg-panel ${compact ? 'gap-0.5 p-0.5' : 'gap-1 p-1'}`} data-testid={`vote-widget-${item.id}`}>
+    <div className={`flex items-center rounded-lg border border-line bg-panel ${compact ? 'gap-1 p-0.5' : 'gap-1.5 p-1'}`} data-testid={`vote-widget-${item.id}`}>
       {btn('up', ArrowBigUp, mine === 'up')}
       <motion.span
         key={pulse}
@@ -55,7 +55,7 @@ export const VoteButtons = ({ collection, item, compact = false, onChange }) => 
         animate={{ scale: shouldReduceMotion ? 1 : [1, 1.25, 1] }}
         transition={{ duration: 0.3 }}
         data-testid={`vote-score-${item.id}`}
-        className={`min-w-[1.5rem] text-center text-sm font-bold tabular-nums ${score > 0 ? 'text-emerald-600' : score < 0 ? 'text-my-red' : 'text-ink'}`}
+        className={`pointer-events-none min-w-[1.5rem] select-none text-center text-sm font-bold tabular-nums ${score > 0 ? 'text-emerald-600' : score < 0 ? 'text-my-red' : 'text-ink'}`}
       >
         {score}
       </motion.span>

@@ -85,7 +85,7 @@ export const Navbar = () => {
             data-testid="theme-toggle"
             onClick={toggle}
             aria-label="Toggle dark mode"
-            className={`relative grid h-10 w-10 place-items-center rounded-full transition-colors duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow ${onHeroTop ? 'text-white hover:bg-white/15' : 'text-ink-muted hover:bg-ink/5 hover:text-ink'}`}
+            className={`relative grid h-11 w-11 place-items-center rounded-full transition-colors duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow ${onHeroTop ? 'text-white hover:bg-white/15' : 'text-ink-muted hover:bg-ink/5 hover:text-ink'}`}
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -97,7 +97,7 @@ export const Navbar = () => {
               <Link
                 to="/profile"
                 data-testid="nav-profile-link"
-                className="grid h-9 w-9 place-items-center rounded-full bg-my-yellow text-sm font-bold text-[#010066] ring-2 ring-transparent transition-shadow hover:ring-my-yellow/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow"
+                className="grid h-11 w-11 place-items-center rounded-full bg-my-yellow text-sm font-bold text-[#010066] ring-2 ring-transparent transition-shadow hover:ring-my-yellow/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow"
                 title={profile?.name}
               >
                 {initials(profile?.name || user.displayName)}
@@ -119,7 +119,7 @@ export const Navbar = () => {
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             aria-controls="nav-mobile-menu"
-            className={`grid h-10 w-10 place-items-center rounded-full md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow ${onHeroTop ? 'text-white' : 'text-ink'}`}
+            className={`grid h-11 w-11 place-items-center rounded-full md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow ${onHeroTop ? 'text-white' : 'text-ink'}`}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>

@@ -16,7 +16,7 @@ export const btnGhost = `${btnBase} text-ink hover:bg-ink/5`;
 
 export const cardCls = `rounded-xl border border-line bg-panel shadow-card ${focusRing}`;
 export const pillCls = (active) =>
-  `inline-flex min-h-[38px] items-center justify-center rounded-full px-3.5 py-1.5 text-sm font-medium transition-[background-color,color] duration-150 active:scale-95 ${focusRing} ${
+  `inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full px-4 py-2.5 text-sm font-medium transition-[background-color,color] duration-150 active:scale-95 ${focusRing} ${
     active ? 'bg-my-blue text-white dark:bg-my-yellow dark:text-[#010066]' : 'bg-panel border border-line text-ink-muted hover:text-ink hover:bg-surface'
   }`;
 
