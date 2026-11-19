@@ -11,7 +11,7 @@ export const EventCard = ({ event }) => {
     <Link
       to={`/events/${event.id}`}
       data-testid={`event-card-${event.id}`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-card transition-shadow duration-200 hover:shadow-lift"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-card transition-shadow duration-200 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
     >
       <div className="relative h-40 overflow-hidden bg-my-blue/5">
         {event.imageUrl ? (

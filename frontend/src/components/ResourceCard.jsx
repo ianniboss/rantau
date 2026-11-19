@@ -48,7 +48,7 @@ export const ResourceCard = ({ resource, onDownload, onApprove, onReject }) => {
               rel="noreferrer"
               onClick={open}
               data-testid={`resource-open-${resource.id}`}
-              className="inline-flex max-w-[14rem] items-center gap-1.5 rounded-lg bg-my-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#02008f] active:scale-95 dark:bg-my-yellow dark:text-[#010066]"
+              className="inline-flex min-h-[36px] max-w-[14rem] items-center gap-1.5 rounded-lg bg-my-blue px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#02008f] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:bg-my-yellow dark:text-[#010066] dark:focus-visible:ring-my-yellow focus-visible:ring-offset-2"
             >
               {resource.fileUrl ? <FileText size={13} className="shrink-0" /> : <ExternalLink size={13} className="shrink-0" />}
               <span className="truncate">{resource.fileUrl ? `Open ${resource.fileType?.toUpperCase() || 'file'}` : domain}</span>

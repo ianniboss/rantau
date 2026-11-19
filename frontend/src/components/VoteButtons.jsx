@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowBigUp, ArrowBigDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { friendlyError } from '@/lib/format';
 export const VoteButtons = ({ collection, item, compact = false, onChange }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
   const [state, setState] = useState({ upvotes: item.upvotes || 0, downvotes: item.downvotes || 0, votedBy: item.votedBy || {} });
   const [pulse, setPulse] = useState(0);
   const mine = user ? state.votedBy[user.uid] : null;
@@ -37,7 +38,7 @@ export const VoteButtons = ({ collection, item, compact = false, onChange }) => 
       data-testid={`${dir}vote-button-${item.id}`}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); vote(dir); }}
       aria-label={dir === 'up' ? 'Upvote' : 'Downvote'}
-      className={`grid h-8 w-8 place-items-center rounded-lg transition-[background-color,color] duration-150 active:scale-90 ${
+      className={`relative grid h-8 w-8 place-items-center rounded-lg transition-[background-color,color] duration-150 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow before:absolute before:-inset-2 before:content-[''] ${
         active ? (dir === 'up' ? 'bg-success/15 text-emerald-600' : 'bg-my-red/10 text-my-red') : 'text-ink-muted hover:bg-ink/5 hover:text-ink'
       }`}
     >
@@ -51,7 +52,7 @@ export const VoteButtons = ({ collection, item, compact = false, onChange }) => 
       <motion.span
         key={pulse}
         initial={{ scale: 1 }}
-        animate={{ scale: [1, 1.25, 1] }}
+        animate={{ scale: shouldReduceMotion ? 1 : [1, 1.25, 1] }}
         transition={{ duration: 0.3 }}
         data-testid={`vote-score-${item.id}`}
         className={`min-w-[1.5rem] text-center text-sm font-bold tabular-nums ${score > 0 ? 'text-emerald-600' : score < 0 ? 'text-my-red' : 'text-ink'}`}

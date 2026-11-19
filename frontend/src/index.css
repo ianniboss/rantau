@@ -14,7 +14,7 @@
   --bg-main: #F8F9FA;
   --bg-card: #FFFFFF;
   --text-primary: #2C3E50;
-  --text-secondary: #7F8C8D;
+  --text-secondary: #506173;
   --border: #E0E0E0;
   --radius: 0.5rem;
   --background: 210 17% 98%;
@@ -28,7 +28,7 @@
   --secondary: 210 17% 95%;
   --secondary-foreground: 210 29% 24%;
   --muted: 210 17% 95%;
-  --muted-foreground: 184 5% 52%;
+  --muted-foreground: 215 18% 38%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 100% 40%;
   --destructive-foreground: 0 0% 100%;
@@ -42,7 +42,7 @@
   --bg-card: #141B27;
   --text-primary: #E8ECF2;
   --text-secondary: #98A4B5;
-  --border: #253043;
+  --border: #2D3A4F;
   --background: 219 35% 7%;
   --foreground: 216 25% 93%;
   --card: 218 32% 12%;
@@ -55,8 +55,8 @@
   --secondary-foreground: 216 25% 93%;
   --muted: 218 28% 17%;
   --muted-foreground: 216 15% 65%;
-  --border-hsl: 218 28% 20%;
-  --input: 218 28% 20%;
+  --border-hsl: 218 27% 24%;
+  --input: 218 27% 24%;
   --ring: 49 100% 50%;
 }
 
@@ -114,6 +114,26 @@ h1, h2, h3, h4 {
 @layer base {
   * {
     @apply border-border;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+  }
+
+  .dark :focus-visible {
+    outline-color: var(--primary-yellow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

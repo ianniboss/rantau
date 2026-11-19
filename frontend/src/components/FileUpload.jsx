@@ -19,7 +19,7 @@ export const FileUpload = ({ accept = 'image/*', multiple = false, onChange, lab
   return (
     <div>
       <label
-        className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-surface px-4 py-8 text-center transition-colors hover:border-my-blue/50 hover:bg-my-blue/5 dark:hover:border-my-yellow/50"
+        className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-surface px-4 py-8 text-center transition-colors hover:border-my-blue/50 hover:bg-my-blue/5 focus-within:border-my-blue focus-within:ring-2 focus-within:ring-my-blue focus-within:ring-offset-2 focus-within:ring-offset-panel dark:hover:border-my-yellow/50 dark:focus-within:border-my-yellow dark:focus-within:ring-my-yellow"
         data-testid={`${testId}-dropzone`}
       >
         <ImagePlus size={24} className="text-ink-muted" />
@@ -50,9 +50,9 @@ export const FileUpload = ({ accept = 'image/*', multiple = false, onChange, lab
                 type="button"
                 aria-label="Remove file"
                 onClick={() => update(files.filter((_, j) => j !== i))}
-                className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-ink text-white shadow"
+                className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-ink text-white shadow transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-blue dark:focus-visible:ring-my-yellow before:absolute before:-inset-2 before:content-['']"
               >
-                <X size={12} />
+                <X size={13} />
               </button>
             </li>
           ))}

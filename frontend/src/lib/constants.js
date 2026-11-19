@@ -32,7 +32,7 @@ export const POST_CATEGORIES = [
   { value: 'housing', label: 'Housing & Accommodation', color: 'bg-my-blue/10 text-my-blue dark:bg-blue-400/20 dark:text-blue-200' },
   { value: 'marketplace', label: 'Marketplace', color: 'bg-flame/10 text-flame dark:bg-flame/20 dark:text-orange-300' },
   { value: 'study_group', label: 'Study Groups', color: 'bg-success/10 text-emerald-700 dark:bg-success/20 dark:text-emerald-300' },
-  { value: 'general', label: 'General Discussion', color: 'bg-ink/10 text-ink dark:bg-white/10' },
+  { value: 'general', label: 'General Discussion', color: 'bg-ink/10 text-ink dark:bg-white/10 dark:text-white' },
   { value: 'jobs', label: 'Jobs & Internships', color: 'bg-my-red/10 text-my-red dark:bg-my-red/20 dark:text-red-300' },
 ];
 

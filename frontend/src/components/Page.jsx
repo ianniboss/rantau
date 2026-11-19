@@ -1,17 +1,21 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
-export const Page = ({ children, className = '', wide = false, testId = 'page' }) => (
-  <motion.main
-    data-testid={testId}
-    initial={{ opacity: 0, y: 12 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -8 }}
-    transition={{ duration: 0.18, ease: 'easeOut' }}
-    className={wide ? className : `mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 ${className}`}
-  >
-    {children}
-  </motion.main>
-);
+export const Page = ({ children, className = '', wide = false, testId = 'page' }) => {
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
+    <motion.main
+      data-testid={testId}
+      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
+      transition={{ duration: shouldReduceMotion ? 0.05 : 0.18, ease: 'easeOut' }}
+      className={wide ? className : `mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 ${className}`}
+    >
+      {children}
+    </motion.main>
+  );
+};
 
 export const PageHeader = ({ eyebrow, title, subtitle, action }) => (
   <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
