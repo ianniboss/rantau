@@ -122,6 +122,11 @@ h1, h2, h3, h4 {
   --tw-ring-offset-color: var(--primary-blue) !important;
 }
 
+.discovery-hero :focus-visible {
+  --tw-ring-color: var(--primary-yellow) !important;
+  --tw-ring-offset-color: var(--primary-blue) !important;
+}
+
 .nav-drawer-backdrop[data-state="open"] {
   animation: nav-backdrop-in 180ms ease-out;
 }
@@ -167,6 +172,24 @@ h1, h2, h3, h4 {
 .rantau-map .leaflet-container { background: hsl(var(--panel, 0 0% 10%)); }
 .dark .rantau-map .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
 .rantau-map .leaflet-control-attribution { font-size: 10px; }
+
+/* Size only CityHub controls; other MapView consumers keep their geometry. */
+.city-hub-map .leaflet-control-zoom.leaflet-bar a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
+.city-hub-map .leaflet-control-attribution a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.city-hub-map .leaflet-popup-close-button {
+  width: 44px !important;
+  height: 44px !important;
+}
 
 @layer base {
   * {

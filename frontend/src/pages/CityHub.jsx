@@ -15,7 +15,7 @@ import { MapView, geocode, hasMaps } from '@/components/MapView';
 import { addPlace, addTip, fetchCity, fetchEvents } from '@/lib/db';
 import { friendlyError, googleMapsLink, isPastDate, timeAgo } from '@/lib/format';
 import { useAuth } from '@/hooks/useAuth';
-import { btnPrimary, btnSecondary, inputCls, labelCls, pillCls } from '@/lib/ui';
+import { btnPrimary, btnSecondary, inputCls, labelCls, pillCls, focusRing } from '@/lib/ui';
 
 const PLACE_ICONS = { restaurant: Utensils, grocery: ShoppingBasket, mosque: Moon, other: Store };
 
@@ -45,7 +45,7 @@ const PlaceForm = ({ cityId, cityName, onDone }) => {
       <div className="sm:col-span-2"><label className={labelCls}>Address</label><input data-testid="place-address-input" className={inputCls} placeholder="3 Rue des Filatiers" {...register('address', { required: 'Required' })} /></div>
       <div><label className={labelCls}>Latitude <span className="text-ink-muted">(optional)</span></label><input data-testid="place-lat-input" className={inputCls} placeholder="43.6045" {...register('lat')} /></div>
       <div><label className={labelCls}>Longitude <span className="text-ink-muted">(optional)</span></label><input data-testid="place-lng-input" className={inputCls} placeholder="1.4442" {...register('lng')} /></div>
-      <button data-testid="place-submit-button" disabled={isSubmitting} className={`${btnPrimary} sm:col-span-2`}>Add place</button>
+      <button data-testid="place-submit-button" disabled={isSubmitting} className={`${btnPrimary} min-h-[44px] sm:col-span-2`}>Add place</button>
     </form>
   );
 };
@@ -95,11 +95,11 @@ export default function CityHub() {
 
   return (
     <Page wide className="w-full" testId="city-hub-page">
-      <section className="relative -mt-16 h-72 overflow-hidden pt-16 sm:h-80">
+      <section className="discovery-hero relative -mt-16 h-72 overflow-hidden pt-16 sm:h-80">
         {meta.image ? <img src={meta.image} alt={name} className="absolute inset-0 h-full w-full object-cover" /> : <div className="hero-gradient absolute inset-0" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/20" />
         <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 pb-8 text-white sm:px-6 lg:px-8">
-          <Link to="/cities" className="mb-auto mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/80 hover:text-white"><ArrowLeft size={16} /> All cities</Link>
+          <Link to="/cities" className={`mb-auto mt-4 inline-flex min-h-[44px] items-center gap-1.5 self-start rounded-lg text-sm font-medium text-white/80 hover:text-white ${focusRing}`}><ArrowLeft size={16} /> All cities</Link>
           <p className="text-xs font-semibold uppercase tracking-wider text-my-yellow">City hub</p>
           <h1 className="font-heading text-4xl font-extrabold tracking-tight sm:text-5xl" data-testid="city-name">{name}</h1>
           <p className="mt-2 text-sm text-white/80">{city?.studentCount || 0} Malaysian students · {city?.places?.length || 0} places · {local.length} upcoming events</p>
@@ -108,9 +108,9 @@ export default function CityHub() {
 
       <div className="mx-auto max-w-7xl space-y-14 px-4 py-10 sm:px-6 lg:px-8">
         <section data-testid="city-events">
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-5 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h2 className="flex items-center gap-2 font-heading text-2xl font-bold text-ink"><Calendar size={20} className="text-my-red" /> Upcoming in {name}</h2>
-            <Link to="/events/new" className={`${btnSecondary} !py-2`}><Plus size={14} /> Add event</Link>
+            <Link to="/events/new" className={`${btnSecondary} min-h-[44px] !py-2`}><Plus size={14} /> Add event</Link>
           </div>
           {eventsLoading ? <ListSkeleton count={3} /> : local.length === 0 ? (
             <EmptyState icon={Calendar} title={`Nothing scheduled in ${name} yet`} message="Organise a makan or a study session and it'll show up here." actionLabel="Create an event" actionTo="/events/new" testId="city-events-empty" />
@@ -119,11 +119,11 @@ export default function CityHub() {
           )}
         </section>
 
-        <div className="grid gap-8 lg:grid-cols-5">
-          <section className="lg:col-span-3" data-testid="city-places">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <section className="min-w-0 lg:col-span-7" data-testid="city-places">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <h2 className="flex items-center gap-2 font-heading text-2xl font-bold text-ink"><MapPin size={20} className="text-my-red" /> Places to know</h2>
-              <button data-testid="suggest-place-button" onClick={() => requireAuth() && setShowPlaceForm((s) => !s)} className={`${btnPrimary} !py-2`}><Plus size={14} /> Suggest a place</button>
+              <button data-testid="suggest-place-button" onClick={() => requireAuth() && setShowPlaceForm((s) => !s)} className={`${btnPrimary} min-h-[44px] !py-2`}><Plus size={14} /> Suggest a place</button>
             </div>
             <div className="flex flex-wrap gap-2">
               <button data-testid="place-filter-all" onClick={() => setPlaceFilter('')} className={pillCls(!placeFilter)}>All</button>
@@ -132,7 +132,7 @@ export default function CityHub() {
             {showPlaceForm && user && <PlaceForm cityId={cityId} cityName={name} onDone={() => { setShowPlaceForm(false); qc.invalidateQueries({ queryKey: ['city', cityId] }); }} />}
             {hasMaps && (
               <div className="mt-4">
-                <MapView center={CITY_CENTERS[cityId]} zoom={13} markers={places.filter((p) => p.lat && p.lng).map((p) => ({ lat: p.lat, lng: p.lng, title: p.name }))} testId="city-map" />
+                <MapView center={CITY_CENTERS[cityId]} zoom={13} markers={places.filter((p) => p.lat && p.lng).map((p) => ({ lat: p.lat, lng: p.lng, title: p.name }))} className="city-hub-map relative z-0 h-80 min-h-80" testId="city-map" />
               </div>
             )}
             <div className="mt-4 space-y-3">
@@ -147,18 +147,18 @@ export default function CityHub() {
                       <p className="font-semibold text-ink">{p.name}</p>
                       <p className="truncate text-xs text-ink-muted">{labelFor(PLACE_CATEGORIES, p.category)} · {p.address}</p>
                     </div>
-                    <a href={googleMapsLink(p.address, name)} target="_blank" rel="noreferrer" className="text-ink-muted hover:text-ink" aria-label="Open in maps"><ExternalLink size={16} /></a>
+                    <a href={googleMapsLink(p.address, name)} target="_blank" rel="noreferrer" className={`grid h-11 w-11 shrink-0 place-items-center rounded-lg text-ink-muted hover:bg-surface hover:text-ink ${focusRing}`} aria-label={`Open ${p.name} in maps`}><ExternalLink size={16} /></a>
                   </div>
                 );
               })}
             </div>
           </section>
 
-          <section className="lg:col-span-2" data-testid="city-tips">
+          <section className="min-w-0 lg:col-span-5" data-testid="city-tips">
             <h2 className="mb-4 flex items-center gap-2 font-heading text-2xl font-bold text-ink"><Lightbulb size={20} className="text-my-yellow" /> Local tips</h2>
             <form onSubmit={submitTip} className="rounded-xl border border-line bg-panel p-4 shadow-card">
-              <textarea data-testid="tip-input" value={tip} onChange={(e) => setTip(e.target.value)} rows={3} maxLength={500} placeholder={`Something every new student in ${name} should know…`} className={inputCls} />
-              <button data-testid="tip-submit-button" disabled={sendingTip || !tip.trim()} className={`${btnPrimary} mt-3 w-full`}>Share tip</button>
+              <textarea data-testid="tip-input" aria-label={`Local tip for ${name}`} value={tip} onChange={(e) => setTip(e.target.value)} rows={3} maxLength={500} placeholder={`Something every new student in ${name} should know…`} className={inputCls} />
+              <button data-testid="tip-submit-button" disabled={sendingTip || !tip.trim()} className={`${btnPrimary} mt-3 min-h-[44px] w-full`}>Share tip</button>
             </form>
             <ul className="mt-4 space-y-3">
               {!isLoading && tips.length === 0 && <li className="text-sm text-ink-muted" data-testid="tips-empty">No tips yet. Yours could be the first.</li>}

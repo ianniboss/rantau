@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Calendar, FileText, Users, MapPin, Landmark, HeartPulse, GraduationCap, Sparkles } from 'lucide-react';
 import { Page } from '@/components/Page';
 import { EventCard } from '@/components/EventCard';
@@ -16,9 +16,9 @@ import { fetchEvents, fetchPosts, fetchResources } from '@/lib/db';
 import { isPastDate } from '@/lib/format';
 import { seedIfEmpty } from '@/lib/seed';
 import { useAuth } from '@/hooks/useAuth';
-import { btnSecondary } from '@/lib/ui';
+import { btnSecondary, focusRing } from '@/lib/ui';
 
-const fade = (delay) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.45, delay, ease: 'easeOut' } });
+const fade = (delay, reduced) => ({ initial: { opacity: 0, y: reduced ? 0 : 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: reduced ? 0 : 0.45, delay: reduced ? 0 : delay, ease: 'easeOut' } });
 
 const QUICK_LINKS = [
   { icon: Landmark, title: 'CAF housing aid', text: 'Apply for APL without a social security number', href: 'https://www.caf.fr' },
@@ -28,12 +28,12 @@ const QUICK_LINKS = [
 
 const Section = ({ title, subtitle, to, children, testId }) => (
   <section className="mt-16 sm:mt-20" data-testid={testId}>
-    <div className="mb-6 flex items-end justify-between gap-4">
+    <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
       <div>
         <h2 className="font-heading text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-ink-muted sm:text-base">{subtitle}</p>}
       </div>
-      <Link to={to} className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-my-blue hover:gap-2 dark:text-my-yellow" style={{ transition: 'gap 150ms' }}>
+      <Link to={to} className={`inline-flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg text-sm font-semibold text-my-blue hover:underline dark:text-my-yellow ${focusRing}`}>
         View all <ArrowRight size={16} />
       </Link>
     </div>
@@ -43,10 +43,7 @@ const Section = ({ title, subtitle, to, children, testId }) => (
 
 export default function Home() {
   const { user } = useAuth();
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 400], [0, -60]);
-  const y2 = useTransform(scrollY, [0, 400], [0, -30]);
-  const y3 = useTransform(scrollY, [0, 400], [0, -90]);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => { seedIfEmpty(); }, []);
 
@@ -60,46 +57,45 @@ export default function Home() {
 
   return (
     <Page wide className="w-full" testId="home-page">
-      <section className="hero-gradient grain relative -mt-16 overflow-hidden pt-16 text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24 lg:grid-cols-12 lg:px-8">
+      <section className="discovery-hero hero-gradient grain relative -mt-16 overflow-hidden pt-16 text-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-10 pt-16 sm:px-6 sm:pb-28 sm:pt-24 lg:grid-cols-12 lg:px-8">
           <div className="lg:col-span-7">
-            <motion.p {...fade(0)} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
+            <motion.p {...fade(0, shouldReduceMotion)} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
               <Sparkles size={13} className="text-my-yellow" /> For Malaysian students in France
             </motion.p>
-            <motion.h1 {...fade(0.08)} className="mt-6 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+            <motion.h1 {...fade(0.08, shouldReduceMotion)} className="mt-6 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
               Your <span className="text-my-yellow">rantau</span> in France, made simpler.
             </motion.h1>
-            <motion.p {...fade(0.18)} className="mt-6 max-w-xl text-base text-white/80 sm:text-lg">
+            <motion.p {...fade(0.18, shouldReduceMotion)} className="mt-6 max-w-xl text-base text-white/80 sm:text-lg">
               Events, CAF & Ameli guides, housing tips and a community board — one hub for Malaysian students from Toulouse to Paris.
             </motion.p>
-            <motion.div {...fade(0.28)} className="mt-8 flex flex-wrap gap-3">
-              <Link to="/resources" data-testid="hero-resources-cta" className="inline-flex items-center gap-2 rounded-lg bg-my-yellow px-5 py-3 text-sm font-bold text-[#010066] shadow-lg transition-transform active:scale-95 hover:bg-[#ffdb33]">
+            <motion.div {...fade(0.28, shouldReduceMotion)} className="mt-8 flex flex-wrap gap-3">
+              <Link to="/resources" data-testid="hero-resources-cta" className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-my-yellow px-5 py-3 text-sm font-bold text-[#010066] shadow-lg transition-transform active:scale-95 hover:bg-[#ffdb33] ${focusRing}`}>
                 <FileText size={16} /> Browse admin guides
               </Link>
-              <Link to={user ? '/events' : '/signup'} data-testid="hero-join-cta" className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur transition-[background-color,transform] hover:bg-white/20 active:scale-95">
+              <Link to={user ? '/events' : '/signup'} data-testid="hero-join-cta" className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur transition-[background-color,transform] hover:bg-white/20 active:scale-95 ${focusRing}`}>
                 {user ? 'Find events' : 'Join the community'} <ArrowRight size={16} />
               </Link>
             </motion.div>
           </div>
-          <div className="relative hidden lg:col-span-5 lg:block">
-            <motion.div style={{ y: y1 }} className="absolute left-4 top-6 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md animate-float">
-              <Calendar size={26} className="text-my-yellow" /><p className="mt-2 text-xs font-semibold">Events</p>
-            </motion.div>
-            <motion.div style={{ y: y2 }} className="absolute right-6 top-24 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md animate-float [animation-delay:1.5s]">
-              <FileText size={26} className="text-my-yellow" /><p className="mt-2 text-xs font-semibold">Guides</p>
-            </motion.div>
-            <motion.div style={{ y: y3 }} className="absolute bottom-4 left-24 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md animate-float [animation-delay:3s]">
-              <Users size={26} className="text-my-yellow" /><p className="mt-2 text-xs font-semibold">Community</p>
-            </motion.div>
+          <div className="hidden lg:col-span-5 lg:flex lg:items-center">
+            <ul data-testid="hero-summary" aria-label="Rantau overview" className="grid w-full grid-cols-3 divide-x divide-white/20 rounded-2xl border border-white/20 bg-white/10">
+              {[{ icon: Calendar, label: 'Events' }, { icon: FileText, label: 'Guides' }, { icon: Users, label: 'Community' }].map(({ icon: Icon, label }) => (
+                <li key={label} className="flex min-w-0 flex-col items-center gap-3 px-3 py-7 text-sm font-semibold">
+                  <Icon size={26} className="text-my-yellow" aria-hidden="true" />
+                  {label}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <StaggerGrid className="relative z-10 -mt-10 grid grid-cols-1 gap-4 sm:-mt-14 md:grid-cols-3" testId="quick-links">
+        <StaggerGrid className="relative z-10 mt-6 grid grid-cols-1 gap-4 sm:-mt-14 md:grid-cols-3" testId="quick-links">
           {QUICK_LINKS.map((q) => (
             <StaggerItem key={q.title}>
-              <a href={q.href} target="_blank" rel="noreferrer" data-testid={`quick-link-${q.title.split(' ')[0].toLowerCase()}`} className="flex h-full items-start gap-4 rounded-xl border border-line bg-panel p-5 shadow-lift">
+              <a href={q.href} target="_blank" rel="noreferrer" data-testid={`quick-link-${q.title.split(' ')[0].toLowerCase()}`} className={`flex h-full min-h-[44px] items-start gap-4 rounded-xl border border-line bg-panel p-5 shadow-lift ${focusRing}`}>
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-my-blue/10 text-my-blue dark:bg-my-yellow/15 dark:text-my-yellow"><q.icon size={22} /></span>
                 <span>
                   <span className="block font-heading font-bold text-ink">{q.title}</span>
@@ -142,11 +138,11 @@ export default function Home() {
               <h2 className="font-heading text-2xl font-bold tracking-tight text-ink sm:text-3xl">Pick your city</h2>
               <p className="mt-1 text-sm text-ink-muted sm:text-base">Local events, halal spots, groceries and tips from students already there.</p>
             </div>
-            <Link to="/cities" className={btnSecondary}>All cities <ArrowRight size={16} /></Link>
+            <Link to="/cities" className={`${btnSecondary} min-h-[44px]`}>All cities <ArrowRight size={16} /></Link>
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
             {CITIES.map((c) => (
-              <Link key={c.id} to={`/cities/${c.id}`} data-testid={`home-city-${c.id}`} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition-[background-color,color,transform] hover:bg-my-blue hover:text-white active:scale-95 dark:hover:bg-my-yellow dark:hover:text-[#010066]">
+              <Link key={c.id} to={`/cities/${c.id}`} data-testid={`home-city-${c.id}`} className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition-[background-color,color,transform] hover:bg-my-blue hover:text-white active:scale-95 dark:hover:bg-my-yellow dark:hover:text-[#010066] ${focusRing}`}>
                 <MapPin size={14} /> {c.name}
               </Link>
             ))}

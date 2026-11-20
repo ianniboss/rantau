@@ -13,9 +13,9 @@ export const EmptyState = ({ icon: Icon = Inbox, title, message, actionLabel, ac
     <h3 className="font-heading text-lg font-bold text-ink">{title}</h3>
     <p className="mt-1.5 max-w-sm text-sm text-ink-muted">{message}</p>
     {actionLabel && (actionTo ? (
-      <Link to={actionTo} data-testid={`${testId}-action`} className={`${btnPrimary} mt-6`}>{actionLabel}</Link>
+      <Link to={actionTo} data-testid={`${testId}-action`} className={`${btnPrimary} mt-6 min-h-[44px]`}>{actionLabel}</Link>
     ) : (
-      <button onClick={onAction} data-testid={`${testId}-action`} className={`${btnPrimary} mt-6`}>{actionLabel}</button>
+      <button onClick={onAction} data-testid={`${testId}-action`} className={`${btnPrimary} mt-6 min-h-[44px]`}>{actionLabel}</button>
     ))}
   </div>
 );
